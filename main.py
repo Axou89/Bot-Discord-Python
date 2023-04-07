@@ -12,7 +12,7 @@ intents = discord.Intents.all()
 client = discord.Client(intents = intents)
 tree = app_commands.CommandTree(client)
 
-AllCmd = list_chained(None)
+AllCmd = list_chained("Start of commands", "Bot")
 
 # Event sync commands
 @client.event
@@ -29,19 +29,34 @@ async def on_message(message):
         await message.channel.send("Hello")
 
 # Add command to list_chained
-def AddCmd(name):
-    AllCmd.append(name)
+def AddCmd(name, author):
+    AllCmd.append(name, author)
+
+# Event on interaction
+@client.event
+async def on_interaction(interaction):
+    if interaction.type == discord.InteractionType.application_command:
+        AddCmd(f"{interaction.data['name']}", f"{interaction.user.id}")
 
 # Event delete a certain ammount of messages
 @tree.command(name = "delete", description = "Delete a certain amount of messages",)
 async def DeleteMessage(interaction, amount: int):
     await interaction.channel.purge(limit= amount)
-    AddCmd("delete")
 
 # Event last command of a user
 @tree.command(name = "lastcmd", description = "Last command of a user")
 async def LastCmd(interaction):
     await interaction.response.send_message(f"Last command is : {AllCmd.last_node.data}")
+
+# Event all commands of a user
+@tree.command(name = "allcmd", description = "All commands of a user")
+async def AllCmds(interaction, user : discord.User = None):
+    current_node = AllCmd.first_node
+    await interaction.response.send_message(f"Commands from <@{user}> :")
+    while current_node != None:
+        if current_node.author == user.id:
+            await interaction.channel.send(f"{current_node.data}")
+            current_node = current_node.next_node
 
 # Event Ultimate Bravery
 @tree.command(name = "bravery", description = "Ultimate Bravery")
@@ -78,9 +93,6 @@ async def UltimateBravery(interaction, role : str = ""):
     spell = random.choice(spells)
     await interaction.channel.send(f"Your Spell to max is : {spell}")
     #await interaction.channel.send(file=discord.File(f"img/Spells/{champion+spell}.png"))
-    
-    # Historic
-    AddCmd("bravery")
 
 # Run bot
 def main():
