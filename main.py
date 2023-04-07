@@ -4,11 +4,15 @@ from discord import app_commands
 from dotenv import load_dotenv
 from os import getenv
 import random
+from Node import list_chained
+from Node import Node
 
 # Bot client
 intents = discord.Intents.all()
 client = discord.Client(intents = intents)
 tree = app_commands.CommandTree(client)
+
+AllCmd = list_chained(None)
 
 # Event sync commands
 @client.event
@@ -24,10 +28,20 @@ async def on_message(message):
     if message.content.startswith("hello"):
         await message.channel.send("Hello")
 
+# Add command to list_chained
+def AddCmd(name):
+    AllCmd.append(name)
+
 # Event delete a certain ammount of messages
 @tree.command(name = "delete", description = "Delete a certain amount of messages",)
 async def DeleteMessage(interaction, amount: int):
     await interaction.channel.purge(limit= amount)
+    AddCmd("delete")
+
+# Event last command of a user
+@tree.command(name = "lastcmd", description = "Last command of a user")
+async def LastCmd(interaction):
+    await interaction.response.send_message(f"Last command is : {AllCmd.last_node.data}")
 
 # Event Ultimate Bravery
 @tree.command(name = "bravery", description = "Ultimate Bravery")
@@ -62,8 +76,11 @@ async def UltimateBravery(interaction, role : str = ""):
     # Spell
     spells = ["Q","W","E"]
     spell = random.choice(spells)
-    await interaction.response.send_message(f"Your Spell to max is : {spell}")
-    await interaction.channel.send(file=discord.File(f"img/Spells/{spell}.png"))
+    await interaction.channel.send(f"Your Spell to max is : {spell}")
+    #await interaction.channel.send(file=discord.File(f"img/Spells/{champion+spell}.png"))
+    
+    # Historic
+    AddCmd("bravery")
 
 # Run bot
 def main():
