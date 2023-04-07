@@ -24,6 +24,7 @@ async def on_message(message):
     if message.content.startswith("hello"):
         await message.channel.send("Hello")
 
+# Event delete a certain ammount of messages
 @tree.command(name = "delete", description = "Delete a certain amount of messages",)
 async def DeleteMessage(ctx, amount: int):
     await ctx.channel.purge(limit= amount)
@@ -40,13 +41,15 @@ async def RandomChampion(interaction):
                     "LeBlanc","Lee Sin","Leona","Lillia","Lissandra","Lucian","Lulu","Lux","Malphite","Malzahar","Maokai",
                     "Master Yi","Milio","Miss Fortune","Mordekaiser","Morgana","Nami","Nasus","Nautilus","Neeko","Nidalee",
                     "Nilah","Nocturne","Nunu & Willump","Olaf","Orianna","Ornn","Pantheon","Poppy","Pyke","Qiyana","Quinn",
-                    "Rakan","Rammus","Rek'Sai","Rell","Renata Glasc","Renekton","Rengar","Riven","Rumble","Ryze","Samira",
+                    "Rakan","Rammus","Rek'Sai","Rell","Renata","Renekton","Rengar","Riven","Rumble","Ryze","Samira",
                     "Sejuani","Senna","Seraphine","Sett","Shaco","Shen","Shyvana","Singed","Sion","Sivir","Skarner","Sona",
                     "Soraka","Swain","Sylas","Syndra","Tahm Kench","Taliyah","Talon","Taric","Teemo","Thresh","Tristana",
                     "Trundle","Tryndamere","Twisted Fate","Twitch","Udyr","Urgot","Varus","Vayne","Veigar","Vel'Koz","Vex",
                     "Vi","Viego","Viktor","Vladimir","Volibear","Warwick","Wukong","Xayah","Xerath","Xin Zhao","Yasuo",
                     "Yone","Yorick","Yuumi","Zac","Zed","Zeri","Ziggs","Zilean","Zoe","Zyra"]
-    await interaction.response.send_message(f"Your champion is {random.choice(champions)}")
+    champion = random.choice(champions)
+    await interaction.channel.send(file=discord.File(f"img/Champions/{champion}.png"))
+    await interaction.response.send_message(f"Your champion is : {champion}")
 
 # Run bot
 def main():
