@@ -26,12 +26,13 @@ async def on_message(message):
 
 # Event delete a certain ammount of messages
 @tree.command(name = "delete", description = "Delete a certain amount of messages",)
-async def DeleteMessage(ctx, amount: int):
-    await ctx.channel.purge(limit= amount)
+async def DeleteMessage(interaction, amount: int):
+    await interaction.channel.purge(limit= amount)
 
-# Event pick random champion
-@tree.command(name = "champion", description = "Pick a random champion")
-async def RandomChampion(interaction):
+# Event Ultimate Bravery
+@tree.command(name = "bravery", description = "Ultimate Bravery")
+async def UltimateBravery(interaction, role : str = ""):
+    # Champion
     champions = ["Aatrox","Ahri","Akali","Akshan","Alistar","Amumu","Anivia","Annie","Aphelios","Ashe",
                  "Aurelion Sol","Azir","Bard","Bel'Veth","Blitzcrank","Brand","Braum","Caitlyn","Cassiopeia","Cho'Gath","Corki",
                     "Darius","Diana","Dr. Mundo","Draven","Ekko","Elise","Evelynn","Ezreal","Fiddlesticks","Fiora",
@@ -48,8 +49,21 @@ async def RandomChampion(interaction):
                     "Vi","Viego","Viktor","Vladimir","Volibear","Warwick","Wukong","Xayah","Xerath","Xin Zhao","Yasuo",
                     "Yone","Yorick","Yuumi","Zac","Zed","Zeri","Ziggs","Zilean","Zoe","Zyra"]
     champion = random.choice(champions)
-    await interaction.channel.send(file=discord.File(f"img/Champions/{champion}.png"))
     await interaction.response.send_message(f"Your champion is : {champion}")
+    await interaction.channel.send(file=discord.File(f"img/Champions/{champion}.png"))
+
+    # Role
+    role = role.lower()
+    roles = ["top","jungle","mid","bot","support"]
+    if role == "" or role not in roles:
+        role = random.choice(roles)
+    await interaction.channel.send(file=discord.File(f"img/Roles/{role}.png"))
+
+    # Spell
+    spells = ["Q","W","E"]
+    spell = random.choice(spells)
+    await interaction.response.send_message(f"Your Spell to max is : {spell}")
+    await interaction.channel.send(file=discord.File(f"img/Spells/{spell}.png"))
 
 # Run bot
 def main():
