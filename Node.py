@@ -40,3 +40,9 @@ class list_chained:
     new_node.next_node = current_node.next_node
     current_node.next_node = new_node
     self.sizes += 1
+
+  def clear(self):
+    self.first_node = Node(None, None)
+    self.last_node = self.first_node
+    self.previous_node = None
+    self.sizes = 1
