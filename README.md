@@ -5,4 +5,5 @@
 |:--------------------:|:------:|
 | All Commands by user |  Done  |
 |  Last Command used   |  Done  |
-|    Clear Historic    |  TODO  |
+|    Clear Historic    |  Done  |
+|   Move in Historic   |  TODO  |

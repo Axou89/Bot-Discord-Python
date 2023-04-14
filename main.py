@@ -67,6 +67,20 @@ async def ClearCmd(interaction):
     AllCmd.clear()
     await interaction.response.send_message("Historic cleared", ephemeral = True)
 
+# Event move in historic
+@tree.command(name = "travelcmd", description = "Move in historic")
+async def TravelCmd(interaction, index : int):
+    if index > AllCmd.size()-1 or index < 0:
+        index = AllCmd.size()
+    current_node = AllCmd.first_node
+    i = 1
+    while i < index:
+        current_node = current_node.next_node
+        i += 1
+    embed = discord.Embed(title = f"Command at index {index}", description=current_node.data, color = 0x00ff00)
+    await interaction.response.send_message(embed=embed)
+    ##### TODO: ADD BUTTON TO TRAVEL IN HISTORIC
+
 # Event Ultimate Bravery
 @tree.command(name = "bravery", description = "Ultimate Bravery")
 async def UltimateBravery(interaction, role : str = ""):
