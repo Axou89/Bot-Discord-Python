@@ -48,7 +48,7 @@ async def DeleteMessage(interaction, amount: int):
 # Event last command of a user
 @tree.command(name = "lastcmd", description = "Last command of a user")
 async def LastCmd(interaction):
-    await interaction.response.send_message(f"Last command is : {AllCmd.last_node.data}", ephemeral = True)
+    await interaction.response.send_message(f"Last command is : {AllCmd.last_node.data}")
 
 # Event all commands of a user
 @tree.command(name = "allcmd", description = "All commands of a user")
@@ -59,7 +59,7 @@ async def AllCmds(interaction, user : discord.User = None):
         if current_node.author == str(user.id):
             embed.add_field(name="Command", value=f"{current_node.data}", inline=False)
         current_node = current_node.next_node
-    await interaction.response.send_message(embed = embed, ephemeral = True)
+    await interaction.response.send_message(embed = embed)
 
 # Event clear commands historic
 @tree.command(name = "clearcmd", description = "Clear commands historic")
