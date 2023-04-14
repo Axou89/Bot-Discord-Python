@@ -4,6 +4,7 @@ from discord import app_commands
 from dotenv import load_dotenv
 from os import getenv
 import random
+import os
 from Node import list_chained
 from Node import Node
 
@@ -25,7 +26,7 @@ async def on_ready():
 async def on_message(message):
     if message.author == client.user:
         return
-    if message.content.startswith("hello"):
+    if message.content.startswith("RivenOTP"):
         await message.channel.send("Hello")
 
 # Add command to list_chained
@@ -38,10 +39,16 @@ async def on_interaction(interaction):
     if interaction.type == discord.InteractionType.application_command:
         AddCmd(f"{interaction.data['name']}", f"{interaction.user.id}")
 
+# Embed
+def EmbedTemplate(title, description = None):
+    embed = discord.Embed(title = title, description = description, color = 0x00ff00)
+    return embed
+
 # Event delete a certain ammount of messages
 @tree.command(name = "delete", description = "Delete a certain amount of messages",)
 async def DeleteMessage(interaction, amount: int):
     await interaction.channel.purge(limit= amount)
+    await interaction.response.send_message(f"{amount} messages deleted", ephemeral = True)
 
 # Event last command of a user
 @tree.command(name = "lastcmd", description = "Last command of a user")
@@ -52,15 +59,18 @@ async def LastCmd(interaction):
 @tree.command(name = "allcmd", description = "All commands of a user")
 async def AllCmds(interaction, user : discord.User = None):
     current_node = AllCmd.first_node
-    await interaction.response.send_message(f"Commands from <@{user}> :")
+    embed = discord.Embed(title = f"All commands of {user.name}", color = 0x00ff00)
     while current_node != None:
-        if current_node.author == user.id:
-            await interaction.channel.send(f"{current_node.data}")
-            current_node = current_node.next_node
+        if current_node.author == str(user.id):
+            embed.add_field(name="Command", value=f"{current_node.data}", inline=False)
+        current_node = current_node.next_node
+    await interaction.response.send_message(embed = embed)
 
 # Event Ultimate Bravery
 @tree.command(name = "bravery", description = "Ultimate Bravery")
 async def UltimateBravery(interaction, role : str = ""):
+    embeds = []
+
     # Champion
     champions = ["Aatrox","Ahri","Akali","Akshan","Alistar","Amumu","Anivia","Annie","Aphelios","Ashe",
                  "Aurelion Sol","Azir","Bard","Bel'Veth","Blitzcrank","Brand","Braum","Caitlyn","Cassiopeia","Cho'Gath","Corki",
@@ -78,8 +88,10 @@ async def UltimateBravery(interaction, role : str = ""):
                     "Vi","Viego","Viktor","Vladimir","Volibear","Warwick","Wukong","Xayah","Xerath","Xin Zhao","Yasuo",
                     "Yone","Yorick","Yuumi","Zac","Zed","Zeri","Ziggs","Zilean","Zoe","Zyra"]
     champion = random.choice(champions)
-    await interaction.response.send_message(f"Your champion is : {champion}")
-    await interaction.channel.send(file=discord.File(f"img/Champions/{champion}.png"))
+    embed = discord.Embed(title = "Champion", description=f"{champion}", color = 0x00ff00)
+    embed.set_image(url=f"attachment://{champion}.png")
+    embeds.append(embed)
+    await interaction.response.send_message(embed = embed, file=discord.File(f"img/Champions/{champion}.png"))
 
     # Role
     role = role.lower()
@@ -89,10 +101,9 @@ async def UltimateBravery(interaction, role : str = ""):
     await interaction.channel.send(file=discord.File(f"img/Roles/{role}.png"))
 
     # Spell
-    spells = ["Q","W","E"]
-    spell = random.choice(spells)
-    await interaction.channel.send(f"Your Spell to max is : {spell}")
-    #await interaction.channel.send(file=discord.File(f"img/Spells/{champion+spell}.png"))
+    await interaction.channel.send("Your Spell to max is :")
+    spell = random.choice(os.listdir(f"img/Spells/{champion}/"))
+    await interaction.channel.send(file=discord.File(f"img/Spells/{champion}/{spell}"))
 
 # Run bot
 def main():
