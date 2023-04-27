@@ -90,6 +90,10 @@ async def ChatBot(interaction):
     content = ""
     while over == False :
         message = await client.wait_for("message", check = lambda message: message.author == interaction.user)
+        if message.content == "reset":
+            await interaction.channel.send("Chatbot reset")
+            await interaction.channel.send(Tree.Chatbot.first_question())
+            continue
         if message.content == "soloq" or message.content == "flex" or message.content == "level":
             content = message.content
         tempo = Tree.Chatbot.send_answer(message.content)
@@ -117,6 +121,15 @@ async def ChatBot(interaction):
                 break
         if noRank:
             await interaction.channel.send("The summoner is not ranked in this queue")
+
+# Event Speak about Chatbot
+@bot.command(name = "speakabout", description = "Speak about Chatbot")
+async def SpeakAbout(interaction, subject : str):
+    Tree.Chatbot.first_question()
+    if Tree.Chatbot.send_answer(subject) == "Write which command you want to use : level / rank" :
+        await interaction.response.send_message(f"Chatbot isn't able to speak about {subject}", ephemeral = True)
+    else:
+        await interaction.response.send_message(f"Chatbot is able to speak about {subject}", ephemeral = True)
 
 # Event Ultimate Bravery
 @bot.command(name = "bravery", description = "Ultimate Bravery")
