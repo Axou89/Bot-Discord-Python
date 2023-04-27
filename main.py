@@ -227,42 +227,37 @@ async def UltimateBravery(interaction, role : str = "", gamemode : str = ""):
     rune = random.sample(Runes, 2)
     PrimaryRune = rune[0]
     MajorRune = random.choice(os.listdir(f"img/Runes/{PrimaryRune}/Major/"))
-    EmbedMajorRune = discord.Embed(title = "Major Rune", color = 0x00ff00, url="https://example.org/")
-    EmbedMajorRune.set_image(url=f"attachment://{MajorRune}")
-    FileMajorRune = discord.File(f"img/Runes/{PrimaryRune}/Major/{MajorRune}")
-
     Rune1 = random.choice(os.listdir(f"img/Runes/{PrimaryRune}/Rune1/"))
-    EmbedRune1 = discord.Embed(title = "Rune 1", color = 0x00ff00, url="https://example.org/")
-    EmbedRune1.set_image(url=f"attachment://{Rune1}")
-    FileRune1 = discord.File(f"img/Runes/{PrimaryRune}/Rune1/{Rune1}")
-
     Rune2 = random.choice(os.listdir(f"img/Runes/{PrimaryRune}/Rune2/"))
-    EmbedRune2 = discord.Embed(title = "Rune 2", color = 0x00ff00, url="https://example.org/")
-    EmbedRune2.set_image(url=f"attachment://{Rune2}")
-    FileRune2 = discord.File(f"img/Runes/{PrimaryRune}/Rune2/{Rune2}")
-
     Rune3 = random.choice(os.listdir(f"img/Runes/{PrimaryRune}/Rune3/"))
-    EmbedRune3 = discord.Embed(title = "Rune 3", color = 0x00ff00, url="https://example.org/")
-    EmbedRune3.set_image(url=f"attachment://{Rune3}")
-    FileRune3 = discord.File(f"img/Runes/{PrimaryRune}/Rune3/{Rune3}")
 
     MinorRune = rune[1]
     SecondRune = random.sample(["Rune1","Rune2","Rune3"], 2)
     Rune4 = random.choice(os.listdir(f"img/Runes/{MinorRune}/{SecondRune[0]}/"))
-    EmbedRune4 = discord.Embed(title = "Rune 4", color = 0x00ff00, url="https://example.org/")
-    EmbedRune4.set_image(url=f"attachment://{Rune4}")
-    FileRune4 = discord.File(f"img/Runes/{MinorRune}/{SecondRune[0]}/{Rune4}")
-
     Rune5 = random.choice(os.listdir(f"img/Runes/{MinorRune}/{SecondRune[1]}/"))
-    EmbedRune5 = discord.Embed(title = "Rune 5", color = 0x00ff00, url="https://example.org/")
-    EmbedRune5.set_image(url=f"attachment://{Rune5}")
-    FileRune5 = discord.File(f"img/Runes/{MinorRune}/{SecondRune[1]}/{Rune5}")
+
+    imageMajorRune = Image.open(f"img/Runes/{PrimaryRune}/Major/{MajorRune}")
+    imageRune1 = Image.open(f"img/Runes/{PrimaryRune}/Rune1/{Rune1}")
+    imageRune2 = Image.open(f"img/Runes/{PrimaryRune}/Rune2/{Rune2}")
+    imageRune3 = Image.open(f"img/Runes/{PrimaryRune}/Rune3/{Rune3}")
+    imageRune4 = Image.open(f"img/Runes/{MinorRune}/{SecondRune[0]}/{Rune4}")
+    imageRune5 = Image.open(f"img/Runes/{MinorRune}/{SecondRune[1]}/{Rune5}")
+
+    imageRune = Image.new("RGBA", (imageMajorRune.width + imageRune1.width + imageRune4.width, imageMajorRune.height))
+    imageRune.paste(imageMajorRune, (0,0))
+    imageRune.paste(imageRune1, (imageMajorRune.width,0))
+    imageRune.paste(imageRune2, (imageMajorRune.width, imageRune1.height))
+    imageRune.paste(imageRune3, (imageMajorRune.width, imageRune1.height + imageRune2.height))
+    imageRune.paste(imageRune4, (imageMajorRune.width + imageRune1.width, 0))
+    imageRune.paste(imageRune5, (imageMajorRune.width + imageRune1.width, imageRune4.width))
+    imageRune.save(f"img/tempo/rune.png")
+
+    EmbedRunes = discord.Embed(title = "Runes", color = 0x00ff00)
+    EmbedRunes.set_image(url="attachment://rune.png")
 
     await interaction.response.send_message("Your Ultimate Bravery :")
-    await interaction.channel.send(embeds = [EmbedMix, EmbedItems], files= [discord.File(f"img/tempo/mix.png"), discord.File(f"img/tempo/legendary.png")])
-    await interaction.channel.send(
-            embeds = [EmbedMajorRune, EmbedRune1, EmbedRune2, EmbedRune3, EmbedRune4, EmbedRune5], 
-            files = [FileMajorRune, FileRune1, FileRune2, FileRune3, FileRune4, FileRune5])
+    await interaction.channel.send(embeds = [EmbedMix, EmbedItems, EmbedRunes],
+                                   files= [discord.File(f"img/tempo/mix.png"), discord.File(f"img/tempo/legendary.png"), discord.File(f"img/tempo/rune.png")])
 
 # Choose random summoner spell
 def ChooseSummonerSpell(role, gamemode):
