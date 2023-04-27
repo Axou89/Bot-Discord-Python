@@ -87,18 +87,36 @@ async def TravelCmd(interaction, index : int):
 async def ChatBot(interaction):
     await interaction.response.send_message(Tree.Chatbot.first_question())
     over = False
+    content = ""
     while over == False :
         message = await client.wait_for("message", check = lambda message: message.author == interaction.user)
+        if message.content == "soloq" or message.content == "flex" or message.content == "level":
+            content = message.content
         tempo = Tree.Chatbot.send_answer(message.content)
         await interaction.channel.send(tempo)
         if tempo == "Give a summoner name :":
             over = True
     message = await client.wait_for("message", check = lambda message: message.author == interaction.user)
-    await interaction.channel.send("tempo pseudo : " + message.content)
 
-    #result = get("https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/BDS%20Snake?api_key=" + getenv('RIOT_KEY'))
-    #resultJson = result.json()
-    #print(resultJson["summonerLevel"])
+    user = get("https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/" + message.content + "?api_key=" + getenv('RIOT_KEY'))
+    userJson = user.json()
+    if content == "level":
+        await interaction.channel.send(f"Account Level : {userJson['summonerLevel']}")
+    else:
+        result = get("https://euw1.api.riotgames.com/lol/league/v4/entries/by-summoner/" + userJson["id"] + "?api_key=" + getenv('RIOT_KEY'))
+        resultJson = result.json()
+        noRank = True
+        for elem in resultJson:
+            if elem["queueType"] == "RANKED_SOLO_5x5" and content == "soloq":
+                await interaction.channel.send(f"Rank SoloQ : {elem['tier']} {elem['rank']} {elem['leaguePoints']} LP")
+                noRank = False
+                break
+            elif elem["queueType"] == "RANKED_FLEX_SR" and content == "flex":
+                await interaction.channel.send(f"Rank Flex : {elem['tier']} {elem['rank']} {elem['leaguePoints']} LP")
+                noRank = False
+                break
+        if noRank:
+            await interaction.channel.send("The summoner is not ranked in this queue")
 
 # Event Ultimate Bravery
 @bot.command(name = "bravery", description = "Ultimate Bravery")
