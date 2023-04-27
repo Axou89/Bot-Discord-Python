@@ -182,6 +182,7 @@ async def UltimateBravery(interaction, role : str = "", gamemode : str = ""):
 
     EmbedMix = discord.Embed(title = "Champion", color = 0x00ff00)
     EmbedMix.set_image(url="attachment://mix.png")
+    FileMix = discord.File("img/tempo/mix.png")
 
     # Items
     Boots = random.choice(os.listdir("img/Items/Boots/"))
@@ -220,6 +221,7 @@ async def UltimateBravery(interaction, role : str = "", gamemode : str = ""):
     new_image.save(f"img/tempo/legendary.png")
     EmbedItems = discord.Embed(title = "Items", color = 0x00ff00)
     EmbedItems.set_image(url="attachment://legendary.png")
+    FileItems = discord.File(f"img/tempo/legendary.png")
 
     # Runes
     Runes = ["Precision","Domination","Sorcery","Resolve","Inspiration"]
@@ -254,10 +256,10 @@ async def UltimateBravery(interaction, role : str = "", gamemode : str = ""):
 
     EmbedRunes = discord.Embed(title = "Runes", color = 0x00ff00)
     EmbedRunes.set_image(url="attachment://rune.png")
+    FileRunes = discord.File(f"img/tempo/rune.png")
 
     await interaction.response.send_message("Your Ultimate Bravery :")
-    await interaction.channel.send(embeds = [EmbedMix, EmbedItems, EmbedRunes],
-                                   files= [discord.File(f"img/tempo/mix.png"), discord.File(f"img/tempo/legendary.png"), discord.File(f"img/tempo/rune.png")])
+    await interaction.channel.send(embeds = [EmbedMix, EmbedItems, EmbedRunes], files= [FileMix, FileItems, FileRunes])
 
 # Choose random summoner spell
 def ChooseSummonerSpell(role, gamemode):
