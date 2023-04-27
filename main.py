@@ -238,20 +238,31 @@ async def UltimateBravery(interaction, role : str = "", gamemode : str = ""):
     Rune4 = random.choice(os.listdir(f"img/Runes/{MinorRune}/{SecondRune[0]}/"))
     Rune5 = random.choice(os.listdir(f"img/Runes/{MinorRune}/{SecondRune[1]}/"))
 
+    Adap1 = random.choice(os.listdir("img/Runes/Adaptive/Adap1/"))
+    Adap2 = random.choice(os.listdir("img/Runes/Adaptive/Adap2/"))
+    Adap3 = random.choice(os.listdir("img/Runes/Adaptive/Adap3/"))
+
     imageMajorRune = Image.open(f"img/Runes/{PrimaryRune}/Major/{MajorRune}")
     imageRune1 = Image.open(f"img/Runes/{PrimaryRune}/Rune1/{Rune1}")
     imageRune2 = Image.open(f"img/Runes/{PrimaryRune}/Rune2/{Rune2}")
     imageRune3 = Image.open(f"img/Runes/{PrimaryRune}/Rune3/{Rune3}")
     imageRune4 = Image.open(f"img/Runes/{MinorRune}/{SecondRune[0]}/{Rune4}")
     imageRune5 = Image.open(f"img/Runes/{MinorRune}/{SecondRune[1]}/{Rune5}")
+    imageAdap1 = Image.open(f"img/Runes/Adaptive/Adap1/{Adap1}")
+    imageAdap2 = Image.open(f"img/Runes/Adaptive/Adap2/{Adap2}")
+    imageAdap3 = Image.open(f"img/Runes/Adaptive/Adap3/{Adap3}")
 
-    imageRune = Image.new("RGBA", (imageMajorRune.width + imageRune1.width + imageRune4.width, imageMajorRune.height))
+    imageRune = Image.new("RGBA", (imageMajorRune.width + imageRune1.width + imageRune4.width + imageAdap1.width, imageMajorRune.height))
     imageRune.paste(imageMajorRune, (0,0))
     imageRune.paste(imageRune1, (imageMajorRune.width,0))
     imageRune.paste(imageRune2, (imageMajorRune.width, imageRune1.height))
     imageRune.paste(imageRune3, (imageMajorRune.width, imageRune1.height + imageRune2.height))
     imageRune.paste(imageRune4, (imageMajorRune.width + imageRune1.width, 0))
     imageRune.paste(imageRune5, (imageMajorRune.width + imageRune1.width, imageRune4.width))
+    imageRune.paste(imageAdap1, (imageMajorRune.width + imageRune1.width + imageRune4.width, 0))
+    imageRune.paste(imageAdap2, (imageMajorRune.width + imageRune1.width + imageRune4.width, imageAdap1.height))
+    imageRune.paste(imageAdap3, (imageMajorRune.width + imageRune1.width + imageRune4.width, imageAdap1.height*2))
+
     imageRune.save(f"img/tempo/rune.png")
 
     EmbedRunes = discord.Embed(title = "Runes", color = 0x00ff00)
