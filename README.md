@@ -8,4 +8,4 @@
 |    Clear Historic     |  Done  | clearcmd  |    N/A     |
 |   Move in Historic    |  TODO  | travelcmd |   index    |
 | Protect Historic File |  TODO  |    N/A    |    N/A     |
-|   Discussion System   |  TODO  |   help    |    N/A     |
+|   Discussion System   |  Done  |   help    |    N/A     |
