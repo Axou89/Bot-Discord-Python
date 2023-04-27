@@ -151,9 +151,6 @@ async def UltimateBravery(interaction, role : str = "", gamemode : str = ""):
                     "Vi","Viego","Viktor","Vladimir","Volibear","Warwick","Wukong","Xayah","Xerath","Xin Zhao","Yasuo",
                     "Yone","Yorick","Yuumi","Zac","Zed","Zeri","Ziggs","Zilean","Zoe","Zyra"]
     champion = random.choice(champions)
-    embedChampion = discord.Embed(title = "Champion", description=f"{champion}", color = 0x00ff00)
-    embedChampion.set_image(url=f"attachment://{champion}.png")
-    fileChampion = discord.File(f"img/Champions/{champion}.png")
 
     # Role
     if gamemode != "aram":
@@ -161,41 +158,34 @@ async def UltimateBravery(interaction, role : str = "", gamemode : str = ""):
         roles = ["top","jungle","mid","bot","support"]
         if role == "" or role not in roles:
             role = random.choice(roles)
-        embedRole = discord.Embed(title = "Role", description=f"{role}", color = 0x00ff00)
-        embedRole.set_image(url=f"attachment://{role}.png")
-        fileRole = discord.File(f"img/Roles/{role}.png")
 
     # Spell
     spell = random.choice(os.listdir(f"img/Spells/{champion}/"))
-    embedSpell = discord.Embed(title = "Spell", color = 0x00ff00)
-    embedSpell.set_image(url=f"attachment://{spell}")
-    fileSpell = discord.File(f"img/Spells/{champion}/{spell}")
 
     # Summoner Spell
     Summoner1, Summoner2 = ChooseSummonerSpell(role, gamemode.lower())
-    embedSummoner1 = discord.Embed(title = "Summoner Spell 1", color = 0x00ff00)
-    embedSummoner1.set_image(url=f"attachment://{Summoner1}")
-    fileSummoner1 = discord.File(f"img/SummonerSpells/{Summoner1}")
-    embedSummoner2 = discord.Embed(title = "Summoner Spell 2", color = 0x00ff00)
-    embedSummoner2.set_image(url=f"attachment://{Summoner2}")
-    fileSummoner2 = discord.File(f"img/SummonerSpells/{Summoner2}")
+
+    # Mix Champion Role Spell SummonerSpell
+    imageChampion = Image.open(f"img/Champions/{champion}.png")
+    imageRole = Image.open(f"img/Roles/{role}.png")
+    imageSpell = Image.open(f"img/Spells/{champion}/{spell}")
+    imageSummoner1 = Image.open(f"img/SummonerSpells/{Summoner1}")
+    imageSummoner2 = Image.open(f"img/SummonerSpells/{Summoner2}")
+
+    imageMix = Image.new("RGBA", (imageChampion.width + imageRole.width + imageSpell.width + imageSummoner1.width + imageSummoner2.width, imageChampion.height))
+    imageMix.paste(imageChampion, (0, 0))
+    imageMix.paste(imageRole, (imageChampion.width, 0))
+    imageMix.paste(imageSpell, (imageChampion.width + imageRole.width, 0))
+    imageMix.paste(imageSummoner1, (imageChampion.width + imageRole.width + imageSpell.width, 0))
+    imageMix.paste(imageSummoner2, (imageChampion.width + imageRole.width + imageSpell.width + imageSummoner1.width, 0))
+    imageMix.save("img/tempo/mix.png")
+
+    EmbedMix = discord.Embed(title = "Champion", color = 0x00ff00)
+    EmbedMix.set_image(url="attachment://mix.png")
 
     # Items
-    if role == "support":
-        ItemSupp = random.choice(os.listdir("img/Items/Support/"))
-        embedStarter = discord.Embed(title = "Starter", color = 0x00ff00)
-        embedStarter.set_image(url=f"attachment://{ItemSupp}")
-        fileStarter = discord.File(f"img/Items/Support/{ItemSupp}")
-    elif role == "jungle":
-        ItemJgl = random.choice(os.listdir("img/Items/Jungle/"))
-        embedStarter = discord.Embed(title = "Starter", color = 0x00ff00)
-        embedStarter.set_image(url=f"attachment://{ItemJgl}")
-        fileStarter = discord.File(f"img/Items/Jungle/{ItemJgl}")
-    
     Boots = random.choice(os.listdir("img/Items/Boots/"))
-
     ItemMythic = random.choice(os.listdir("img/Items/Mythic/"))
-
     ItemsLegendary = random.sample(os.listdir("img/Items/Legendary/"), 4)
 
     imageBoots = Image.open(f"img/Items/Boots/{Boots}")
@@ -204,14 +194,29 @@ async def UltimateBravery(interaction, role : str = "", gamemode : str = ""):
     image2 = Image.open(f"img/Items/Legendary/{ItemsLegendary[1]}")
     image3 = Image.open(f"img/Items/Legendary/{ItemsLegendary[2]}")
     image4 = Image.open(f"img/Items/Legendary/{ItemsLegendary[3]}")
-    new_image = Image.new('RGB', (image1.width*6, image1.height))
-    new_image.paste(imageBoots, (0,0))
-    new_image.paste(imageMythic, (image1.width*1,0))
-    new_image.paste(image1, (image1.width*2,0))
-    new_image.paste(image2, (image1.width*3,0))
-    new_image.paste(image3, (image1.width*4,0))
-    new_image.paste(image4, (image1.width*5,0))
 
+    if role == "support" or role == "jungle":
+        role.capitalize()
+        ItemStarter = random.choice(os.listdir(f"img/Items/{role}/"))
+
+        new_image = Image.new('RGB', (image1.width*7, image1.height))
+        imageStarter = Image.open(f"img/Items/{role}/{ItemStarter}")
+        new_image.paste(imageStarter, (0,0))
+        new_image.paste(imageBoots, (image1.width*1,0))
+        new_image.paste(imageMythic, (image1.width*2,0))
+        new_image.paste(image1, (image1.width*3,0))
+        new_image.paste(image2, (image1.width*4,0))
+        new_image.paste(image3, (image1.width*5,0))
+        new_image.paste(image4, (image1.width*6,0))
+    else :
+        new_image = Image.new('RGB', (image1.width*6, image1.height))
+        new_image.paste(imageBoots, (0,0))
+        new_image.paste(imageMythic, (image1.width*1,0))
+        new_image.paste(image1, (image1.width*2,0))
+        new_image.paste(image2, (image1.width*3,0))
+        new_image.paste(image3, (image1.width*4,0))
+        new_image.paste(image4, (image1.width*5,0))
+    
     new_image.save(f"img/tempo/legendary.png")
     EmbedItems = discord.Embed(title = "Items", color = 0x00ff00)
     EmbedItems.set_image(url="attachment://legendary.png")
@@ -254,15 +259,7 @@ async def UltimateBravery(interaction, role : str = "", gamemode : str = ""):
     FileRune5 = discord.File(f"img/Runes/{MinorRune}/{SecondRune[1]}/{Rune5}")
 
     await interaction.response.send_message("Your Ultimate Bravery :")
-    await interaction.channel.send(
-            embeds = [embedChampion, embedRole, embedSpell, embedSummoner1, embedSummoner2], 
-            files = [fileChampion, fileRole, fileSpell, fileSummoner1, fileSummoner2])
-    if role == "support" or role == "jungle":
-        await interaction.channel.send(
-            embeds = [embedStarter], 
-            files = [fileStarter])
-    else:
-        await interaction.channel.send(embed=EmbedItems, file=discord.File(f"img/tempo/legendary.png"))
+    await interaction.channel.send(embeds = [EmbedMix, EmbedItems], files= [discord.File(f"img/tempo/mix.png"), discord.File(f"img/tempo/legendary.png")])
     await interaction.channel.send(
             embeds = [EmbedMajorRune, EmbedRune1, EmbedRune2, EmbedRune3, EmbedRune4, EmbedRune5], 
             files = [FileMajorRune, FileRune1, FileRune2, FileRune3, FileRune4, FileRune5])
