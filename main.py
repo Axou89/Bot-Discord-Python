@@ -5,8 +5,9 @@ from os import getenv
 import random
 import os
 from Node import list_chained
-from Tree import Tree
+import Tree
 from requests import get
+from PIL import Image
 
 # Bot client
 intents = discord.Intents.all()
@@ -14,12 +15,6 @@ client = discord.Client(intents = intents)
 bot = app_commands.CommandTree(client)
 
 AllCmd = list_chained("Start of commands", "Bot")
-
-# Create the tree
-def DefineTree():
-    global Chatbot
-    Chatbot = Tree("Command to use")
-    Chatbot.append_question("level", ["Write the name of the summoner"], "Command to use")
 
 # Event sync commands
 @client.event
@@ -90,12 +85,16 @@ async def TravelCmd(interaction, index : int):
 # Event Chat bot
 @bot.command(name = "help", description = "Chat bot")
 async def ChatBot(interaction):
-    embed = discord.Embed(title = "Write which command you want to use", description = "level / soloq / flex", color = 0x00ff00)
-    await interaction.response.send_message(embed = embed)
+    await interaction.response.send_message(Tree.Chatbot.first_question())
+    over = False
+    while over == False :
+        message = await client.wait_for("message", check = lambda message: message.author == interaction.user)
+        tempo = Tree.Chatbot.send_answer(message.content)
+        await interaction.channel.send(tempo)
+        if tempo == "Give a summoner name :":
+            over = True
     message = await client.wait_for("message", check = lambda message: message.author == interaction.user)
-    if Chatbot.get_question() != None:
-        print()
-        await interaction.channel.send("Write")
+    await interaction.channel.send("tempo pseudo : " + message.content)
 
     #result = get("https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/BDS%20Snake?api_key=" + getenv('RIOT_KEY'))
     #resultJson = result.json()
@@ -163,28 +162,65 @@ async def UltimateBravery(interaction, role : str = "", gamemode : str = ""):
         fileStarter = discord.File(f"img/Items/Jungle/{ItemJgl}")
     
     Boots = random.choice(os.listdir("img/Items/Boots/"))
-    embedBoots = discord.Embed(title = "Boots", color = 0x00ff00)
-    embedBoots.set_image(url=f"attachment://{Boots}")
-    fileBoots = discord.File(f"img/Items/Boots/{Boots}")
 
     ItemMythic = random.choice(os.listdir("img/Items/Mythic/"))
-    embedMythic = discord.Embed(title = "Mythic", color = 0x00ff00)
-    embedMythic.set_image(url=f"attachment://{ItemMythic}")
-    fileMythic = discord.File(f"img/Items/Mythic/{ItemMythic}")
 
     ItemsLegendary = random.sample(os.listdir("img/Items/Legendary/"), 4)
-    EmbedItem1 = discord.Embed(title = "Legendary", color = 0x00ff00, url="https://example.org/")
-    EmbedItem1.set_image(url=f"attachment://{ItemsLegendary[0]}")
-    FileItem1 = discord.File(f"img/Items/Legendary/{ItemsLegendary[0]}")
-    EmbedItem2 = discord.Embed(title = "Legendary", color = 0x00ff00, url="https://example.org/")
-    EmbedItem2.set_image(url=f"attachment://{ItemsLegendary[1]}")
-    FileItem2 = discord.File(f"img/Items/Legendary/{ItemsLegendary[1]}")
-    EmbedItem3 = discord.Embed(title = "Legendary", color = 0x00ff00, url="https://example.org/")
-    EmbedItem3.set_image(url=f"attachment://{ItemsLegendary[2]}")
-    FileItem3 = discord.File(f"img/Items/Legendary/{ItemsLegendary[2]}")
-    EmbedItem4 = discord.Embed(title = "Legendary", color = 0x00ff00, url="https://example.org/")
-    EmbedItem4.set_image(url=f"attachment://{ItemsLegendary[3]}")
-    FileItem4 = discord.File(f"img/Items/Legendary/{ItemsLegendary[3]}")
+
+    imageBoots = Image.open(f"img/Items/Boots/{Boots}")
+    imageMythic = Image.open(f"img/Items/Mythic/{ItemMythic}")
+    image1 = Image.open(f"img/Items/Legendary/{ItemsLegendary[0]}")
+    image2 = Image.open(f"img/Items/Legendary/{ItemsLegendary[1]}")
+    image3 = Image.open(f"img/Items/Legendary/{ItemsLegendary[2]}")
+    image4 = Image.open(f"img/Items/Legendary/{ItemsLegendary[3]}")
+    new_image = Image.new('RGB', (image1.width*6, image1.height))
+    new_image.paste(imageBoots, (0,0))
+    new_image.paste(imageMythic, (image1.width*1,0))
+    new_image.paste(image1, (image1.width*2,0))
+    new_image.paste(image2, (image1.width*3,0))
+    new_image.paste(image3, (image1.width*4,0))
+    new_image.paste(image4, (image1.width*5,0))
+
+    new_image.save(f"img/tempo/legendary.png")
+    EmbedItems = discord.Embed(title = "Items", color = 0x00ff00)
+    EmbedItems.set_image(url="attachment://legendary.png")
+
+    # Runes
+    Runes = ["Precision","Domination","Sorcery","Resolve","Inspiration"]
+
+    rune = random.sample(Runes, 2)
+    PrimaryRune = rune[0]
+    MajorRune = random.choice(os.listdir(f"img/Runes/{PrimaryRune}/Major/"))
+    EmbedMajorRune = discord.Embed(title = "Major Rune", color = 0x00ff00, url="https://example.org/")
+    EmbedMajorRune.set_image(url=f"attachment://{MajorRune}")
+    FileMajorRune = discord.File(f"img/Runes/{PrimaryRune}/Major/{MajorRune}")
+
+    Rune1 = random.choice(os.listdir(f"img/Runes/{PrimaryRune}/Rune1/"))
+    EmbedRune1 = discord.Embed(title = "Rune 1", color = 0x00ff00, url="https://example.org/")
+    EmbedRune1.set_image(url=f"attachment://{Rune1}")
+    FileRune1 = discord.File(f"img/Runes/{PrimaryRune}/Rune1/{Rune1}")
+
+    Rune2 = random.choice(os.listdir(f"img/Runes/{PrimaryRune}/Rune2/"))
+    EmbedRune2 = discord.Embed(title = "Rune 2", color = 0x00ff00, url="https://example.org/")
+    EmbedRune2.set_image(url=f"attachment://{Rune2}")
+    FileRune2 = discord.File(f"img/Runes/{PrimaryRune}/Rune2/{Rune2}")
+
+    Rune3 = random.choice(os.listdir(f"img/Runes/{PrimaryRune}/Rune3/"))
+    EmbedRune3 = discord.Embed(title = "Rune 3", color = 0x00ff00, url="https://example.org/")
+    EmbedRune3.set_image(url=f"attachment://{Rune3}")
+    FileRune3 = discord.File(f"img/Runes/{PrimaryRune}/Rune3/{Rune3}")
+
+    MinorRune = rune[1]
+    SecondRune = random.sample(["Rune1","Rune2","Rune3"], 2)
+    Rune4 = random.choice(os.listdir(f"img/Runes/{MinorRune}/{SecondRune[0]}/"))
+    EmbedRune4 = discord.Embed(title = "Rune 4", color = 0x00ff00, url="https://example.org/")
+    EmbedRune4.set_image(url=f"attachment://{Rune4}")
+    FileRune4 = discord.File(f"img/Runes/{MinorRune}/{SecondRune[0]}/{Rune4}")
+
+    Rune5 = random.choice(os.listdir(f"img/Runes/{MinorRune}/{SecondRune[1]}/"))
+    EmbedRune5 = discord.Embed(title = "Rune 5", color = 0x00ff00, url="https://example.org/")
+    EmbedRune5.set_image(url=f"attachment://{Rune5}")
+    FileRune5 = discord.File(f"img/Runes/{MinorRune}/{SecondRune[1]}/{Rune5}")
 
     await interaction.response.send_message("Your Ultimate Bravery :")
     await interaction.channel.send(
@@ -192,12 +228,13 @@ async def UltimateBravery(interaction, role : str = "", gamemode : str = ""):
             files = [fileChampion, fileRole, fileSpell, fileSummoner1, fileSummoner2])
     if role == "support" or role == "jungle":
         await interaction.channel.send(
-            embeds = [embedStarter, embedBoots, embedMythic, EmbedItem1, EmbedItem2, EmbedItem3, EmbedItem4], 
-            files = [fileStarter, fileBoots, fileMythic, FileItem1, FileItem2, FileItem3, FileItem4])
+            embeds = [embedStarter], 
+            files = [fileStarter])
     else:
-        await interaction.channel.send(
-            embeds = [embedBoots, embedMythic, EmbedItem1, EmbedItem2, EmbedItem3, EmbedItem4], 
-            files = [fileBoots, fileMythic, FileItem1, FileItem2, FileItem3, FileItem4])
+        await interaction.channel.send(embed=EmbedItems, file=discord.File(f"img/tempo/legendary.png"))
+    await interaction.channel.send(
+            embeds = [EmbedMajorRune, EmbedRune1, EmbedRune2, EmbedRune3, EmbedRune4, EmbedRune5], 
+            files = [FileMajorRune, FileRune1, FileRune2, FileRune3, FileRune4, FileRune5])
 
 # Choose random summoner spell
 def ChooseSummonerSpell(role, gamemode):
@@ -228,7 +265,6 @@ def ChooseSummonerSpell(role, gamemode):
 def main():
     load_dotenv()
     token = getenv('TOKEN')
-    DefineTree()
     client.run(token)
 
 main()

@@ -34,6 +34,10 @@ class Tree :
 
   def get_question(self):
     return self.current_node.question
+  
+  def first_question(self):
+    self.current_node = self.first_node
+    return self.current_node.question
 
   def send_answer(self, reponse):
     for N in self.current_node.next_nodes:
@@ -42,3 +46,10 @@ class Tree :
         break
     
     return self.current_node.question
+  
+# Question, Reponse attendu de la question précédente, Question précédente
+Chatbot = Tree("Write which command you want to use : level / rank")
+Chatbot.append_question("Give a summoner name :", ["level"], "Write which command you want to use : level / rank")
+Chatbot.append_question("Give the queue you want : soloq / flex", ["rank"], "Write which command you want to use : level / rank")
+Chatbot.append_question("Give a summoner name :", ["soloq"], "Give the queue you want : soloq / flex")
+Chatbot.append_question("Give a summoner name :", ["flex"], "Give the queue you want : soloq / flex")
