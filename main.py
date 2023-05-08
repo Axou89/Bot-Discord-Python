@@ -5,6 +5,7 @@ from os import getenv
 import random
 import os
 from Node import list_chained
+from Hashtable import Hashtable
 import Tree
 from requests import get
 from PIL import Image
@@ -15,6 +16,7 @@ client = discord.Client(intents = intents)
 bot = app_commands.CommandTree(client)
 
 AllCmd = list_chained("Start of commands", "Bot")
+MyConversation = Hashtable([("User", ["Content"])])
 
 # Event sync commands
 @client.event
@@ -27,8 +29,18 @@ async def on_ready():
 async def on_message(message):
     if message.author == client.user:
         return
-    if message.content.startswith("RivenOTP"):
-        await message.channel.send("Hello")
+    content = MyConversation.get_value(str(message.author.id))
+    if content != None:
+        content.append(message.content)
+        MyConversation.update_bucket([(str(message.author.id), content)])
+    else:
+        MyConversation._assign_buckets([(str(message.author.id), [message.content])])
+
+
+# Event User Conversation
+@bot.command(name = "conversation", description = "User Conversation")
+async def UserConversation(interaction):
+    await interaction.response.send_message(MyConversation.get_value(str(interaction.user.id)), ephemeral = True)
 
 # Add command to list_chained
 def AddCmd(name, author):
