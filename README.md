@@ -1,6 +1,6 @@
 # Bot Discord in Python
 
-## TODO
+## All Commands available
 |                Task                 | Status |   Cmd Name   |   Parameters   |
 |:-----------------------------------:|:------:|:------------:|:--------------:|
 |        All Commands by user         |  Done  |    allcmd    |      user      |
