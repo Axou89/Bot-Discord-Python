@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from os import getenv
 import random
 import os
-from Node import list_chained
+import Node
 from Hashtable import Hashtable
 import Tree
 from requests import get
@@ -15,7 +15,6 @@ intents = discord.Intents.all()
 client = discord.Client(intents = intents)
 bot = app_commands.CommandTree(client)
 
-AllCmd = list_chained("Start of commands", "Bot")
 MyConversation = Hashtable([("User", ["Content"])])
 
 # Event sync commands
@@ -44,7 +43,7 @@ async def UserConversation(interaction):
 
 # Add command to list_chained
 def AddCmd(name, author):
-    AllCmd.append(name, author)
+    Node.AllCmd.append(name, author)
 
 # Event on interaction
 @client.event
@@ -61,12 +60,12 @@ async def DeleteMessage(interaction, amount: int):
 # Event last command of a user
 @bot.command(name = "lastcmd", description = "Last command of a user")
 async def LastCmd(interaction):
-    await interaction.response.send_message(f"Last command is : {AllCmd.last_node.data}")
+    await interaction.response.send_message(f"Last command is : {Node.AllCmd.last_node.data}")
 
 # Event all commands of a user
 @bot.command(name = "allcmd", description = "All commands of a user")
 async def AllCmds(interaction, user : discord.User = None):
-    current_node = AllCmd.first_node
+    current_node = Node.AllCmd.first_node
     embed = discord.Embed(title = f"All commands of {user.name}", color = 0x00ff00)
     while current_node != None:
         if current_node.author == str(user.id):
@@ -77,15 +76,15 @@ async def AllCmds(interaction, user : discord.User = None):
 # Event clear commands historic
 @bot.command(name = "clearcmd", description = "Clear commands historic")
 async def ClearCmd(interaction):
-    AllCmd.clear()
+    Node.AllCmd.clear()
     await interaction.response.send_message("Historic cleared", ephemeral = True)
 
 # Event move in historic
 @bot.command(name = "travelcmd", description = "Move in historic")
 async def TravelCmd(interaction, index : int):
-    if index > AllCmd.size()-1 or index < 0:
-        index = AllCmd.size()
-    current_node = AllCmd.first_node
+    if index > Node.AllCmd.size()-1 or index < 0:
+        index = Node.AllCmd.size()
+    current_node = Node.AllCmd.first_node
     i = 1
     while i < index:
         current_node = current_node.next_node
@@ -179,18 +178,26 @@ async def UltimateBravery(interaction, role : str = "", gamemode : str = ""):
 
     # Mix Champion Role Spell SummonerSpell
     imageChampion = Image.open(f"img/Champions/{champion}.png")
-    imageRole = Image.open(f"img/Roles/{role}.png")
     imageSpell = Image.open(f"img/Spells/{champion}/{spell}")
     imageSummoner1 = Image.open(f"img/SummonerSpells/{Summoner1}")
     imageSummoner2 = Image.open(f"img/SummonerSpells/{Summoner2}")
 
-    imageMix = Image.new("RGBA", (imageChampion.width + imageRole.width + imageSpell.width + imageSummoner1.width + imageSummoner2.width, imageChampion.height))
-    imageMix.paste(imageChampion, (0, 0))
-    imageMix.paste(imageRole, (imageChampion.width, 0))
-    imageMix.paste(imageSpell, (imageChampion.width + imageRole.width, 0))
-    imageMix.paste(imageSummoner1, (imageChampion.width + imageRole.width + imageSpell.width, 0))
-    imageMix.paste(imageSummoner2, (imageChampion.width + imageRole.width + imageSpell.width + imageSummoner1.width, 0))
-    imageMix.save("img/tempo/mix.png")
+    if gamemode == "aram":
+        imageMix = Image.new("RGBA", (imageChampion.width + imageSpell.width + imageSummoner1.width + imageSummoner2.width, imageChampion.height))
+        imageMix.paste(imageChampion, (0, 0))
+        imageMix.paste(imageSpell, (imageChampion.width, 0))
+        imageMix.paste(imageSummoner1, (imageChampion.width + imageSpell.width, 0))
+        imageMix.paste(imageSummoner2, (imageChampion.width + imageSpell.width + imageSummoner1.width, 0))
+        imageMix.save("img/tempo/mix.png")
+    else:
+        imageRole = Image.open(f"img/Roles/{role}.png")
+        imageMix = Image.new("RGBA", (imageChampion.width + imageRole.width + imageSpell.width + imageSummoner1.width + imageSummoner2.width, imageChampion.height))
+        imageMix.paste(imageChampion, (0, 0))
+        imageMix.paste(imageRole, (imageChampion.width, 0))
+        imageMix.paste(imageSpell, (imageChampion.width + imageRole.width, 0))
+        imageMix.paste(imageSummoner1, (imageChampion.width + imageRole.width + imageSpell.width, 0))
+        imageMix.paste(imageSummoner2, (imageChampion.width + imageRole.width + imageSpell.width + imageSummoner1.width, 0))
+        imageMix.save("img/tempo/mix.png")
 
     EmbedMix = discord.Embed(title = "Champion", color = 0x00ff00)
     EmbedMix.set_image(url="attachment://mix.png")

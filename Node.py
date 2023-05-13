@@ -46,3 +46,5 @@ class list_chained:
     self.last_node = self.first_node
     self.previous_node = None
     self.sizes = 1
+
+AllCmd = list_chained("Start of commands", "Bot")
