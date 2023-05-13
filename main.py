@@ -9,6 +9,7 @@ from Hashtable import Hashtable
 import Tree
 from requests import get
 from PIL import Image
+from json import load
 
 # Bot client
 intents = discord.Intents.all()
@@ -21,6 +22,7 @@ MyConversation = Hashtable([("User", ["Content"])])
 @client.event
 async def on_ready():
     await bot.sync()
+    LoadHistorical()
     print("Ready!")
 
 # Event on message
@@ -51,6 +53,13 @@ async def on_interaction(interaction):
     if interaction.type == discord.InteractionType.application_command:
         AddCmd(f"{interaction.data['name']}", f"{interaction.user.id}")
 
+# Event to disconnect the bot
+@bot.command(name = "disconnect", description = "Disconnect the bot")
+async def Disconnect(interaction):
+    Node.AllCmd.save_to_json()
+    await interaction.response.send_message("Disconnecting...", ephemeral = True)
+    await client.close()
+
 # Event delete a certain ammount of messages
 @bot.command(name = "delete", description = "Delete a certain amount of messages")
 async def DeleteMessage(interaction, amount: int):
@@ -65,6 +74,8 @@ async def LastCmd(interaction):
 # Event all commands of a user
 @bot.command(name = "allcmd", description = "All commands of a user")
 async def AllCmds(interaction, user : discord.User = None):
+    if user == None:
+        user = interaction.user
     current_node = Node.AllCmd.first_node
     embed = discord.Embed(title = f"All commands of {user.name}", color = 0x00ff00)
     while current_node != None:
@@ -315,6 +326,13 @@ def ChooseSummonerSpell(role, gamemode):
         while SummonerSpell1 == SummonerSpell2:
             SummonerSpell2 = random.choice(lst)
         return SummonerSpell1, SummonerSpell2
+
+# Load historical data on start
+def LoadHistorical():
+    with open("historical.json", 'r') as file:
+        data = load(file)
+        for elem in data:
+            Node.AllCmd.append(elem["data"], elem["author"])
 
 # Run bot
 def main():

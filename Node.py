@@ -1,3 +1,5 @@
+from json import dump
+
 class Node:
   def __init__(self,data,author):
     self.data = data
@@ -46,5 +48,14 @@ class list_chained:
     self.last_node = self.first_node
     self.previous_node = None
     self.sizes = 1
+
+  def save_to_json(self):
+    data = []
+    current_node = self.first_node
+    while current_node != None:
+      data.append({"data": current_node.data, "author": current_node.author})
+      current_node = current_node.next_node
+    with open("historical.json", "w") as file:
+      dump(data, file, indent=4)
 
 AllCmd = list_chained("Start of commands", "Bot")
