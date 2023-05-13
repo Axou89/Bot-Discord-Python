@@ -104,6 +104,22 @@ async def TravelCmd(interaction, index : int):
     await interaction.response.send_message(embed=embed)
     ##### TODO: ADD BUTTON TO TRAVEL IN HISTORIC
 
+# Event to show all available commands
+@bot.command(name = "helpcmd", description = "Show all available commands")
+async def HelpCmd(interaction):
+    embed = discord.Embed(title = "All available commands", color = 0x00ff00)
+    embed.add_field(name="allcmd", value="Show all commands made by an user", inline=False)
+    embed.add_field(name="lastcmd", value="Show last command used", inline=False)
+    embed.add_field(name="travelcmd", value="Move in historic", inline=False)
+    embed.add_field(name="clearcmd", value="Clear historic", inline=False)
+    embed.add_field(name="delete", value="Delete a certain amount of messages", inline=False)
+    embed.add_field(name="disconnect", value="Disconnect the bot", inline=False)
+    embed.add_field(name="conversation", value="Show conversation with the bot", inline=False)
+    embed.add_field(name="bravery", value="Do a random Ultimate Bravery", inline=False)
+    embed.add_field(name="help", value="Talk with the bot", inline=False)
+    embed.add_field(name="speakbout", value="Ask the bot if he talks about a subject", inline=False)
+    await interaction.response.send_message(embed = embed)
+
 # Event Chat bot
 @bot.command(name = "help", description = "Chat bot")
 async def ChatBot(interaction):
