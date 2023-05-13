@@ -11,3 +11,4 @@
 |        Discussion System         |  Done  |     help     |    N/A     |
 |          Speak about X           |  Done  |  speakabout  |  subject   |
 | Save conversation from each user |  Done  | conversation |    N/A     |
+|        Disconnect the bot        |  Done  |  disconnect  |    N/A     |
