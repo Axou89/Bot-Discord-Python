@@ -7,6 +7,7 @@ import os
 import Node
 from Hashtable import Hashtable
 import Tree
+import File
 from requests import get
 from PIL import Image
 from json import load
